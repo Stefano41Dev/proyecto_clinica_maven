@@ -9,6 +9,7 @@ import exception.UnauthorizedException;
 import model.Especialidad;
 import model.Usuario;
 import model.enums.Rol;
+import org.mindrot.jbcrypt.BCrypt;
 import security.JwtUtil;
 import service.interfaces.IUsuarioService;
 
@@ -35,7 +36,7 @@ public class UsuarioServiceImpl implements IUsuarioService {
 
     @Override
     public LoginResponse login(LoginRequest loginRequest) {
-        String query = "SELECT * FROM tb_usuario WHERE correo = ? LIMIT 1;";
+        String query = "SELECT * FROM tb_usuario WHERE correo = ? AND activo = 1 LIMIT 1";
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         Usuario usuarioBuscado = new Usuario();
@@ -58,7 +59,7 @@ public class UsuarioServiceImpl implements IUsuarioService {
         } catch (SQLException e) {
             throw new RuntimeException("Error buscando especialidad", e);
         }
-        if(!usuarioBuscado.getPasswd().equals(loginRequest.passwd())){
+        if (!BCrypt.checkpw(loginRequest.passwd(), usuarioBuscado.getPasswd())) {
             throw new UnauthorizedException("La contraseña no coincide");
         }
         String token = JwtUtil.generarToken(

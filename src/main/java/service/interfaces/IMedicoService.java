@@ -8,7 +8,7 @@ import dto.medico.MedicoResponse;
 public interface IMedicoService {
 	 List<MedicoResponse> listar(int pagina, int tamanioPagina);
 	 MedicoResponse buscarPorId(int idMedico);
-	 MedicoResponse guardar(MedicoRequest medico);
-	 MedicoResponse actualizar(int id, MedicoRequest medico);
+	 MedicoResponse registrarMedico(MedicoRequest medico);
+	 MedicoResponse registrarMedico(int id, MedicoRequest medico);
 	 void eliminar(int idMedico);
 }

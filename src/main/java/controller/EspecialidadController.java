@@ -15,10 +15,13 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
+import model.enums.Rol;
+import security.RolesPermitidos;
 import service.impl.EspecialidadServiceImpl;
 import service.interfaces.IEspecialidadService;
 
 @Path("/especialidad")
+@RolesPermitidos({Rol.ADMINISTRADOR})
 public class EspecialidadController {
     IEspecialidadService service = new EspecialidadServiceImpl();
     @GET

@@ -1,6 +1,6 @@
 package dto.usuario;
 
-public record UsuarioRequest(
+public record LoginRequest(
         String correo,
         String passwd
       

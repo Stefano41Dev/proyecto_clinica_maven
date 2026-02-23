@@ -12,6 +12,7 @@ import model.enums.Rol;
 @Builder
 public class Usuario {
 
+    private Integer idUsuario;
     private Integer idPersona;
     private String correo;
     private String passwd;

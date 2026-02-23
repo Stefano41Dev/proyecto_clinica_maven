@@ -22,5 +22,6 @@ public class Paciente {
     private Integer idSexo;
     private Integer idEstadoCivil;
     private String correo;
+    private Boolean activo;
 
 }

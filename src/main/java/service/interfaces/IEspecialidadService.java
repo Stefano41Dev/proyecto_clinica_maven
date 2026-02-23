@@ -7,9 +7,9 @@ import dto.especialidad.EspecialidadResponse;
 
 public interface IEspecialidadService {
 
-    List<EspecialidadResponse> listar();
+    List<EspecialidadResponse> listarEspecialidad();
     EspecialidadResponse buscarPorId(int idEspecialidad);
-    EspecialidadResponse guardar(EspecialidadRequest especialidad);
-    EspecialidadResponse actualizar(int id, EspecialidadRequest especialidad);
-    void eliminar(int idEspecialidad);
+    EspecialidadResponse guardarEspecialidad(EspecialidadRequest especialidad);
+    EspecialidadResponse actualizarEspecialidad(int id, EspecialidadRequest especialidad);
+    void eliminarEspecialidadPorId(int idEspecialidad);
 }

@@ -21,5 +21,6 @@ public class Medico {
     private String telefono;
     private String correo;
     private LocalDate fechaRegistro;
+    private Boolean activo;
 
 }

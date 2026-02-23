@@ -13,4 +13,6 @@ public class TipoDocumento {
 
     private Integer idTipoDocumento;
     private String nombreDocumento;
+    private Boolean activo;
+
 }

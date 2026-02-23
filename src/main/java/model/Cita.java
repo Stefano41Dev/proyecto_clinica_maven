@@ -21,5 +21,5 @@ public class Cita {
     private LocalTime hora;
     private Integer idEstadoCita;
     private String motivo;
-
+    private Boolean activo;
 }

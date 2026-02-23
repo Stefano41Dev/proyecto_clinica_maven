@@ -13,5 +13,6 @@ public class EstadoCivil {
 
     private Integer idEstadoCivil;
     private String nombreEstado;
+    private Boolean activo;
 
 }

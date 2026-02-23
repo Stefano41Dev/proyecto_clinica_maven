@@ -16,6 +16,6 @@ public class Usuario {
     private String correo;
     private String passwd;
     private Rol rol;
+    private Boolean activo;
 
-    
 }

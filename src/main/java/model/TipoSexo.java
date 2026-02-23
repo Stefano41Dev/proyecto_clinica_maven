@@ -14,5 +14,6 @@ public class TipoSexo {
     
     private Integer idSexo;
     private String sexo;
-    
+    private Boolean activo;
+
 }

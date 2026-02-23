@@ -12,5 +12,6 @@ import lombok.NoArgsConstructor;
 public class Especialidad {
     private Integer idEspecialidad;
     private String nombre;
+    private Boolean activo;
 
 }

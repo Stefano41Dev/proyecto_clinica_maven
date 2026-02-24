@@ -8,6 +8,6 @@ public record MedicoRequest(
         Integer idEspecialidad,
         String numeroColegiatura,
         String telefono,
-        String correo,
-        LocalDate fechaRegistro
+        String correo
+
 ) {}

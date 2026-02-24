@@ -22,7 +22,7 @@ public class JwtFilter implements ContainerRequestFilter {
     public void filter(ContainerRequestContext requestContext) throws IOException {
         String path = requestContext.getUriInfo().getPath();
 
-        if (path.contains("auth/login")) {
+        if (path.contains("auth/login") || path.contains("verificacion-email/activar")) {
             return;
         }
 

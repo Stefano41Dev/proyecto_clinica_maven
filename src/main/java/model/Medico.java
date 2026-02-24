@@ -1,6 +1,7 @@
 package model;
 
 import java.time.LocalDate;
+import java.util.Date;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,13 +15,11 @@ import lombok.NoArgsConstructor;
 public class Medico {
 
     private Integer idMedico;
-    private String nombres;
-    private String apellidos;
+    private Integer idPersona;
     private Integer idEspecialidad;
     private String numeroColegiatura;
     private String telefono;
-    private String correo;
-    private LocalDate fechaRegistro;
+    private Date fechaRegistro;
     private Boolean activo;
 
 }

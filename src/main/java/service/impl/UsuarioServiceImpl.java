@@ -6,7 +6,6 @@ import dto.usuario.LoginResponse;
 import dto.usuario.UsuarioResponse;
 import exception.ResourceNotFoundException;
 import exception.UnauthorizedException;
-import model.Especialidad;
 import model.Usuario;
 import model.enums.Rol;
 import org.mindrot.jbcrypt.BCrypt;

@@ -5,6 +5,7 @@ import java.util.List;
 import dto.medico.MedicoRequest;
 import dto.medico.MedicoResponse;
 import dto.medico.MedicoTokenVerificacionResponse;
+import dto.medico.MedicoUpdateRequest;
 
 public interface IMedicoService {
 	 List<MedicoResponse> listar(int pagina, int tamanioPagina);
@@ -12,6 +13,6 @@ public interface IMedicoService {
 	 MedicoResponse registrarMedico(MedicoRequest medico);
 	 MedicoTokenVerificacionResponse buscarPorToken(String token);
 	 void activarCuentaToken(String token);
-	 MedicoResponse actualizarMedico(int id, MedicoRequest medico);
+	 MedicoResponse actualizarMedico(int id, MedicoUpdateRequest medico);
 	 void eliminar(int idMedico);
 }

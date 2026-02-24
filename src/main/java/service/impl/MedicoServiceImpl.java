@@ -4,8 +4,10 @@ import bd.ConnectorBD;
 import dto.medico.MedicoRequest;
 import dto.medico.MedicoResponse;
 import dto.medico.MedicoTokenVerificacionResponse;
+import dto.medico.MedicoUpdateRequest;
 import exception.BadRequestException;
 import exception.ConflictException;
+import exception.ResourceNotFoundException;
 import model.Medico;
 import service.interfaces.IMedicoService;
 import util.JavaMail;
@@ -28,7 +30,36 @@ public class MedicoServiceImpl implements IMedicoService {
 
     @Override
     public MedicoResponse buscarPorId(int idMedico) {
-        return null;
+        String query = "CALL buscar_medico_id(?)";
+        try(CallableStatement cs = ConnectorBD.getConexion().prepareCall(query)){
+            cs.setInt(1,idMedico);
+            boolean hasResult = cs.execute();
+            if(hasResult){
+                ResultSet rs = cs.getResultSet();
+
+                if(rs.next()){
+                    return MedicoResponse.builder()
+                            .idMedico(rs.getInt("id_medico"))
+                            .nombres(rs.getString("nombres"))
+                            .apellidos(rs.getString("apellidos"))
+                            .correo(rs.getString("correo"))
+                            .numeroColegiatura(rs.getString("numero_colegiatura"))
+                            .telefono(rs.getString("telefono"))
+                            .idEspecialidad(rs.getInt("id_especialidad"))
+                            .nombreEspecialidad(rs.getString("nombre"))
+                            .fechaRegistro(rs.getDate("fecha_registro"))
+                            .build();
+                }else{
+                    throw new ResourceNotFoundException("No se encontro el medico con id " + idMedico);
+                }
+            }
+
+            throw new ConflictException("No se pudo registrar el médico");
+
+        }catch (SQLException e){
+            throw new RuntimeException("SQL EXCEPTION ", e);
+        }
+
     }
 
     @Override
@@ -83,7 +114,7 @@ public class MedicoServiceImpl implements IMedicoService {
             throw new ConflictException("No se pudo registrar el médico");
 
         } catch (SQLException e) {
-            throw new ConflictException("Error registrando medico: " + e);
+            throw new RuntimeException("Error registrando medico: " + e);
         }
     }
 
@@ -137,8 +168,42 @@ public class MedicoServiceImpl implements IMedicoService {
     }
 
     @Override
-    public MedicoResponse actualizarMedico(int id, MedicoRequest medico) {
-        return null;
+    public MedicoResponse actualizarMedico(int id, MedicoUpdateRequest medico) {
+        String query = "CALL actualizar_medico_id(?,?,?,?,?,?)";
+        try (CallableStatement cs = ConnectorBD.getConexion().prepareCall(query)){
+            cs.setInt(1,id);
+            cs.setString(2,medico.nombres());
+            cs.setString(3, medico.apellidos());
+            cs.setString(4, medico.numeroColegiatura());
+            cs.setString(5,medico.telefono());
+            cs.setInt(6,medico.idEspecialidad());
+
+            boolean hasResult = cs.execute();
+
+            if (hasResult) {
+                ResultSet rs = cs.getResultSet();
+                if(rs.next()){
+                    return MedicoResponse.builder()
+                            .idMedico(rs.getInt("id_medico"))
+                            .nombres(rs.getString("nombres"))
+                            .apellidos(rs.getString("apellidos"))
+                            .correo(rs.getString("correo"))
+                            .numeroColegiatura(rs.getString("numero_colegiatura"))
+                            .telefono(rs.getString("telefono"))
+                            .idEspecialidad(rs.getInt("id_especialidad"))
+                            .nombreEspecialidad(rs.getString("nombre"))
+                            .fechaRegistro(rs.getDate("fecha_registro"))
+                            .build();
+                }else{
+                    throw new ResourceNotFoundException("No se encontro el medico con id " + id);
+                }
+            }
+
+            throw new ConflictException("No se pudo registrar el médico");
+
+        }catch (SQLException e){
+            throw new RuntimeException("SQLEXCEPTION: No se pudo realizar la actualizacion de datos: ",e);
+        }
     }
 
     @Override

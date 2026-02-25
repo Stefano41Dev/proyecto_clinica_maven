@@ -1,15 +1,15 @@
 package dto.paciente;
 
-import java.time.LocalDate;
+import java.util.Date;
 
 public record PacienteRequest(
         Integer idTipoDocumento,
         String numeroDocumento,
         String nombres,
         String apellidos,
-        LocalDate fechaNacimiento,
-        LocalDate fechaRegistro,
+        Date fechaNacimiento,
         Integer idSexo,
         Integer idEstadoCivil,
-        String correo
+        String correo,
+        String password
 ) {}

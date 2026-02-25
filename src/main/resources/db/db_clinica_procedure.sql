@@ -285,3 +285,78 @@ BEGIN
     END IF;
 END //
 DELIMITER ;
+-- Paciente
+
+DELIMITER //
+
+CREATE PROCEDURE registrar_paciente(
+	IN p_nombres VARCHAR(100),
+    IN p_apellidos VARCHAR(100),
+    IN p_correo VARCHAR(100),
+    IN p_password VARCHAR(250),
+	IN p_id_tipo_documento INT,
+    IN p_numero_documento VARCHAR(20),
+    IN p_fecha_nacimiento DATE,
+    IN p_id_sexo INT,
+    IN p_estado_civil INT,
+    IN p_token_verificacion VARCHAR(255),
+    IN p_token_expiracion DATETIME
+)
+BEGIN
+	DECLARE v_id_persona INT;
+    DECLARE v_id_paciente INT;
+    DECLARE v_existe INT DEFAULT 0;
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        RESIGNAL;
+    END;
+
+    START TRANSACTION;
+
+    SELECT COUNT(*)
+    INTO v_existe
+    FROM tb_usuario
+    WHERE correo = p_correo AND activo = 1;
+
+    IF v_existe > 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'El correo ya está registrado';
+    END IF;
+
+    INSERT INTO tb_persona(nombres,apellidos,correo,activo)
+    VALUES (p_nombres,p_apellidos,p_correo,0);
+
+    SET v_id_persona = LAST_INSERT_ID();
+
+    INSERT INTO tb_paciente(id_persona,id_tipo_documento,numero_documento,fecha_nacimiento,fecha_registro,id_sexo,id_estado_civil,activo,token_verificacion,token_expiracion)
+    VALUES (v_id_persona,p_id_tipo_documento,p_numero_documento,p_fecha_nacimiento,CURDATE(),p_id_sexo,p_estado_civil,0,p_token_verificacion,p_token_expiracion);
+
+    SET v_id_paciente = LAST_INSERT_ID();
+
+    INSERT INTO tb_usuario(id_persona,correo,passwd,rol,activo)
+    VALUES (v_id_persona,p_correo,p_password,'PACIENTE',0);
+
+    COMMIT;
+    
+    SELECT 
+    pa.id_paciente,
+    pe.nombres,
+    pe.apellidos,
+    pe.correo,
+    td.nombre_documento,
+    pa.numero_documento,
+    pa.fecha_nacimiento,
+    pa.fecha_registro,
+    ts.sexo,
+    tec.nombre_estado
+    FROM tb_paciente pa
+    INNER JOIN tb_persona pe ON pe.id_persona = pa.id_persona
+    INNER JOIN tb_tipo_documento td ON td.id_tipo_documento = pa.id_tipo_documento
+    INNER JOIN tb_tipo_sexo ts ON ts.id_sexo = pa.id_sexo
+    INNER JOIN tb_estado_civil tec ON tec.id_estado_civil = pa.id_estado_civil
+    WHERE pa.id_paciente = v_id_paciente AND pa.activo = 1 ;
+END //
+
+DELIMITER ;

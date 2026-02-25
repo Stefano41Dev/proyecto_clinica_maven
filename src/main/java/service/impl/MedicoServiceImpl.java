@@ -116,7 +116,7 @@ public class MedicoServiceImpl implements IMedicoService {
         String tokenVerificacion = UUID.randomUUID().toString();
         Date date = new Date();
         Date tokenExpiracion = new Date(date.getTime() + (24 * 60 * 60 * 1000));
-        String link = "http://localhost:8080/ClinicaProyect/App/verificacion-email/activar?token=" + tokenVerificacion;
+        String link = "http://localhost:8080/ClinicaProyect/App/verificacion-email/activar-medico?token=" + tokenVerificacion;
 
         try (CallableStatement cs = ConnectorBD.getConexion().prepareCall(query)) {
 
@@ -155,7 +155,7 @@ public class MedicoServiceImpl implements IMedicoService {
         String tokenVerificacion = UUID.randomUUID().toString();
         Date date = new Date();
         Date tokenExpiracion = new Date(date.getTime() + (24 * 60 * 60 * 1000));
-        String link = "http://localhost:8080/ClinicaProyect/App/verificacion-email/activar?token=" + tokenVerificacion;
+        String link = "http://localhost:8080/ClinicaProyect/App/verificacion-email/activar-medico?token=" + tokenVerificacion;
 
         try (CallableStatement cs = ConnectorBD.getConexion().prepareCall(query)) {
 

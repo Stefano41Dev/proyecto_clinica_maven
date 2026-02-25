@@ -360,3 +360,53 @@ BEGIN
 END //
 
 DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE activar_paciente (
+    IN p_token_verificacion VARCHAR(255),
+    OUT p_activado BOOLEAN
+)
+BEGIN
+    DECLARE v_id_persona INT;
+    DECLARE v_count INT;
+
+    SET p_activado = FALSE;
+
+    START TRANSACTION;
+
+    SELECT id_persona
+    INTO v_id_persona
+    FROM tb_paciente
+    WHERE token_verificacion = p_token_verificacion
+      AND activo = 0
+    LIMIT 1;
+
+    -- Si no se encontró ningún médico pendiente de activación, salimos
+   IF v_id_persona IS NULL THEN
+        ROLLBACK;
+      
+    ELSE
+
+		UPDATE tb_paciente
+		SET activo = 1,
+			token_verificacion = NULL,
+			token_expiracion = NULL
+		WHERE token_verificacion = p_token_verificacion;
+
+		UPDATE tb_usuario
+		SET activo = 1
+		WHERE id_persona = v_id_persona
+		  AND rol = 'PACIENTE';
+
+		UPDATE tb_persona
+		SET activo = 1
+		WHERE id_persona = v_id_persona;
+
+		COMMIT;
+
+		SET p_activado = TRUE;
+	END IF;
+END //
+
+DELIMITER ;

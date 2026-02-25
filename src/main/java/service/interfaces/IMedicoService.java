@@ -2,17 +2,16 @@ package service.interfaces;
 
 import java.util.List;
 
-import dto.medico.MedicoRequest;
-import dto.medico.MedicoResponse;
-import dto.medico.MedicoTokenVerificacionResponse;
-import dto.medico.MedicoUpdateRequest;
+import dto.medico.*;
+import dto.paginacion.PageResponse;
 
 public interface IMedicoService {
-	 List<MedicoResponse> listar(int pagina, int tamanioPagina);
+	 PageResponse<MedicoResponse> listar(int pagina, int tamanioPagina);
 	 MedicoResponse buscarPorId(int idMedico);
-	 MedicoResponse registrarMedico(MedicoRequest medico);
+	 String registrarMedico(MedicoRequest medico);
+	 MedicoResponse registrarMedicoVerificacionGmail(MedicoRequestGmail medico);
 	 MedicoTokenVerificacionResponse buscarPorToken(String token);
 	 void activarCuentaToken(String token);
-	 MedicoResponse actualizarMedico(int id, MedicoUpdateRequest medico);
-	 void eliminar(int idMedico);
+	 MedicoResponse actualizarMedico(int id, MedicoRequest medico);
+	 String eliminar(int idMedico);
 }

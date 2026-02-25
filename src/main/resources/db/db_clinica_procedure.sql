@@ -1,5 +1,6 @@
 use bd_clinica;
 
+
 DELIMITER //
 
 CREATE PROCEDURE registrar_medico(
@@ -142,7 +143,7 @@ BEGIN
     INNER JOIN tb_persona p ON p.id_persona = m.id_persona
     INNER JOIN tb_usuario u ON u.id_persona = m.id_persona
     INNER JOIN tb_especialidad e ON m.id_especialidad = e.id_especialidad
-    WHERE m.id_medico = p_id_medico;
+    WHERE m.id_medico = p_id_medico AND m.activo = 1;
 END //
 
 DELIMITER ;
@@ -155,7 +156,9 @@ CREATE PROCEDURE actualizar_medico_id(
     IN p_apellidos VARCHAR(100),
     IN p_numero_colegiatura VARCHAR(50),
     IN p_telefono VARCHAR(20),
-    IN p_id_especialidad INT
+    IN p_id_especialidad INT,
+    IN p_correo VARCHAR(100),
+    IN p_password VARCHAR(250)
 )
 BEGIN
     DECLARE v_id_persona INT;
@@ -180,10 +183,15 @@ BEGIN
     
     UPDATE tb_persona
 		SET nombres = p_nombres,
-			apellidos = p_apellidos
-	WHERE id_persona = v_id_persona;
+			apellidos = p_apellidos,
+            correo = p_correo
+	WHERE id_persona = v_id_persona AND activo = 1 ;
     
-	
+	UPDATE tb_usuario
+		SET correo = p_correo,
+			passwd = p_password
+	WHERE id_persona = v_id_persona AND activo = 1 ; 
+    
     COMMIT;
     
     SELECT 
@@ -203,4 +211,77 @@ BEGIN
     WHERE m.id_medico = p_id_medico;        
 END //
 
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE listar_medico_paginacion(
+	IN p_limit INT,
+    IN p_offset INT
+)
+BEGIN
+	SELECT 
+        m.id_medico,
+        p.nombres,
+        p.apellidos,
+        u.correo,
+        m.numero_colegiatura,
+        m.telefono,
+        m.id_especialidad,
+        e.nombre,
+        m.fecha_registro
+    FROM tb_medico m
+    INNER JOIN tb_persona p ON p.id_persona = m.id_persona
+    INNER JOIN tb_usuario u ON u.id_persona = m.id_persona
+    INNER JOIN tb_especialidad e ON m.id_especialidad = e.id_especialidad
+    WHERE m.activo = 1
+    LIMIT p_limit OFFSET p_offset;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE eliminar_medico_por_id(
+	IN p_id_medico INT
+)
+BEGIN
+	 DECLARE v_id_persona INT;
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SELECT 'ERROR AL ELIMINAR EL MEDICO' AS mensaje;
+    END;
+
+    START TRANSACTION;
+
+    SELECT id_persona
+    INTO v_id_persona
+    FROM tb_medico 
+    WHERE id_medico = p_id_medico AND activo = 1
+    LIMIT 1;
+
+    IF v_id_persona IS NULL THEN
+        ROLLBACK;
+        SELECT 'MEDICO NO ENCONTRADO O YA INACTIVO' AS mensaje;
+    ELSE
+
+        UPDATE tb_medico
+        SET activo = 0
+        WHERE id_medico = p_id_medico AND activo = 1;
+
+        UPDATE tb_persona
+        SET activo = 0
+        WHERE id_persona = v_id_persona AND activo = 1;
+
+        UPDATE tb_usuario
+        SET activo = 0
+        WHERE id_persona = v_id_persona AND activo = 1;
+
+        COMMIT;
+
+        SELECT 'SE ELIMINO EL MEDICO CORRECTAMENTE' AS mensaje;
+    END IF;
+END //
 DELIMITER ;

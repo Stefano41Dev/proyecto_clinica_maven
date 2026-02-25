@@ -4,6 +4,7 @@ import bd.ConnectorBD;
 import dto.especialidad.EspecialidadRequest;
 import dto.especialidad.EspecialidadResponse;
 import exception.ResourceNotFoundException;
+import javassist.NotFoundException;
 import mapper.EspecialidadMapper;
 import model.Especialidad;
 import service.interfaces.IEspecialidadService;
@@ -118,7 +119,7 @@ public class EspecialidadServiceImpl implements IEspecialidadService {
             int filas = preparedStatement.executeUpdate();
 
             if (filas == 0) {
-                throw new RuntimeException("Especialidad no encontrada o inactiva");
+                throw new ResourceNotFoundException("Especialidad no encontrada o inactiva con id" + id);
             }
 
             return buscarPorId(id);
@@ -129,7 +130,7 @@ public class EspecialidadServiceImpl implements IEspecialidadService {
     }
 
     @Override
-    public void eliminarEspecialidadPorId(int idEspecialidad) {
+    public String eliminarEspecialidadPorId(int idEspecialidad) {
         String query = "UPDATE tb_especialidad SET activo = 0 WHERE id_especialidad = ?";
         PreparedStatement preparedStatement = null;
 
@@ -140,7 +141,9 @@ public class EspecialidadServiceImpl implements IEspecialidadService {
             int filas = preparedStatement.executeUpdate();
 
             if (filas == 0) {
-                throw new RuntimeException("Especialidad no encontrada");
+                throw new ResourceNotFoundException("Especialidad no encontrada");
+            }else{
+                return "Se elimino correctamente la especilidad";
             }
 
         } catch (SQLException e) {

@@ -32,7 +32,7 @@ public class EspecialidadController {
 
         return Response.ok(listar).build();
     }
-    @GET
+    @POST
     @Path("/registrar")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
@@ -42,27 +42,31 @@ public class EspecialidadController {
         EspecialidadResponse especialidadResponse = service.guardarEspecialidad(especialidadRequest);
         return Response.status(Status.CREATED).entity(especialidadResponse).build();
     }
-    @GET
-    @Path("/actualizar")
+    @PUT
+    @Path("/actualizar/{id_especialidad}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response actualizarEspecialidad() {
-        List<EspecialidadResponse>  listar=service.listarEspecialidad();
-
-        return Response.ok(listar).build();
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response actualizarEspecialidad(
+            @PathParam("id_especialidad") int idEspecialidad,
+            EspecialidadRequest especialidadRequest
+    ) {
+        EspecialidadResponse especialidad =service.actualizarEspecialidad(idEspecialidad,especialidadRequest);
+        return Response.ok(especialidad).build();
+    }
+    @DELETE
+    @Path("/eliminar/{id_especialidad}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response eliminarEspecialidad(
+            @PathParam("id_especialidad") int idEspecialidad
+    ) {
+        String  mensaje =service.eliminarEspecialidadPorId(idEspecialidad);
+        return Response.ok(mensaje).build();
     }
     @GET
-    @Path("/eliminar")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response eliminarEspecialidad() {
-        List<EspecialidadResponse>  listar=service.listarEspecialidad();
-
-        return Response.ok(listar).build();
-    }
-    @GET
-    @Path("/buscar/{idEspecialidad}")
+    @Path("/buscar/{id_especialidad}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response buscarEspecialidad(
-            @PathParam("idEspecialidad") int idEspecialidad
+            @PathParam("id_especialidad") int idEspecialidad
     ) {
         EspecialidadResponse  especialidadBuscada =service.buscarPorId(idEspecialidad);
 

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import bd.ConnectorBD;
+import dto.estado_cita.EstadoCitaRequest;
 import dto.estado_cita.EstadoCitaResponse;
 import exception.BadRequestException;
 import exception.ConflictException;
@@ -64,53 +65,49 @@ public class EstadoCitaServiceImpl implements IEstadoCitaService {
     }
 
     @Override
-    public EstadoCitaResponse guardar(EstadoCita estadoCita) {
+    public EstadoCitaResponse guardar(EstadoCitaRequest estadoCita) {
 
-        if (estadoCita == null || estadoCita.getNombreEstado() == null || estadoCita.getNombreEstado().isBlank()) {
+        if (estadoCita == null || estadoCita.nombreEstado() == null || estadoCita.nombreEstado().isBlank()) {
             throw new BadRequestException("El nombre del estado es obligatorio");
         }
 
         try (Connection cn = ConnectorBD.getConexion()) {
 
-            // 🔎 Validar duplicado
             String verificar = "SELECT COUNT(*) FROM tb_estado_cita WHERE LOWER(nombre_estado)=LOWER(?) AND activo=1";
             PreparedStatement psVer = cn.prepareStatement(verificar);
-            psVer.setString(1, estadoCita.getNombreEstado());
+            psVer.setString(1, estadoCita.nombreEstado());
             ResultSet rs = psVer.executeQuery();
             rs.next();
 
             if (rs.getInt(1) > 0) {
                 throw new ConflictException("Ya existe un EstadoCita con ese nombre");
             }
-
-            // 💾 Insertar
             String insertar = "INSERT INTO tb_estado_cita (nombre_estado, activo) VALUES (?,1)";
             PreparedStatement ps = cn.prepareStatement(insertar, Statement.RETURN_GENERATED_KEYS);
-            ps.setString(1, estadoCita.getNombreEstado());
+            ps.setString(1, estadoCita.nombreEstado());
             ps.executeUpdate();
 
             ResultSet generated = ps.getGeneratedKeys();
             if (generated.next()) {
                 return new EstadoCitaResponse(
                         generated.getInt(1),
-                        estadoCita.getNombreEstado()
+                        estadoCita.nombreEstado()
                 );
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("SQL EXCEPTION",e);
         }
 
         return null;
     }
 
     @Override
-    public EstadoCitaResponse actualizar(int id, EstadoCita estadoCita) {
+    public EstadoCitaResponse actualizar(int id, EstadoCitaRequest estadoCita) {
 
-        // validar existencia
         buscarPorId(id);
 
-        if (estadoCita.getNombreEstado() == null || estadoCita.getNombreEstado().isBlank()) {
+        if (estadoCita.nombreEstado() == null || estadoCita.nombreEstado().isBlank()) {
             throw new BadRequestException("El nombre del estado es obligatorio");
         }
 
@@ -119,11 +116,11 @@ public class EstadoCitaServiceImpl implements IEstadoCitaService {
         try (Connection cn = ConnectorBD.getConexion();
              PreparedStatement ps = cn.prepareStatement(sql)) {
 
-            ps.setString(1, estadoCita.getNombreEstado());
+            ps.setString(1, estadoCita.nombreEstado());
             ps.setInt(2, id);
             ps.executeUpdate();
 
-            return new EstadoCitaResponse(id, estadoCita.getNombreEstado());
+            return new EstadoCitaResponse(id, estadoCita.nombreEstado());
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -133,7 +130,6 @@ public class EstadoCitaServiceImpl implements IEstadoCitaService {
     @Override
     public void eliminar(int idEstadoCita) {
 
-        // validar existencia
         buscarPorId(idEstadoCita);
 
         String sql = "UPDATE tb_estado_cita SET activo=0 WHERE id_estado_cita=?";

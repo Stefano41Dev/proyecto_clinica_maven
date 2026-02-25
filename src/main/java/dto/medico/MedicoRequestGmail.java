@@ -1,10 +1,11 @@
 package dto.medico;
 
-public record MedicoUpdateRequest (
+public record MedicoRequestGmail(
         String nombres,
         String apellidos,
         Integer idEspecialidad,
         String numeroColegiatura,
-        String telefono
-){
-}
+        String telefono,
+        String correo
+
+) {}

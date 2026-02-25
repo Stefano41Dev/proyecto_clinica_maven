@@ -15,28 +15,31 @@ import service.interfaces.IEstadoCivilService;
 
 
 @Path("/estado-civil")
-@RolesPermitidos({Rol.ADMINISTRADOR})   // rol
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
+@RolesPermitidos({Rol.ADMINISTRADOR})
 public class EstadoCivilController {
 
-    private IEstadoCivilService service = new EstadoCivilServiceImpl();
+    IEstadoCivilService service = new EstadoCivilServiceImpl();
 
     @GET
     @Path("/listado")
+    @Produces(MediaType.APPLICATION_JSON)
     public Response listar() {
         List<EstadoCivilResponse> lista = service.listar();
         return Response.ok(lista).build();
     }
 
     @GET
-    @Path("/{id}")
+    @Path("/buscar/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
     public Response buscar(@PathParam("id") int id) {
         EstadoCivilResponse response = service.buscarPorId(id);
         return Response.ok(response).build();
     }
 
     @POST
+    @Path("/registrar")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response guardar(EstadoCivilRequest request) {
         EstadoCivilResponse response = service.guardar(request);
         return Response.status(Response.Status.CREATED)
@@ -45,14 +48,17 @@ public class EstadoCivilController {
     }
 
     @PUT
-    @Path("/{id}")
+    @Path("/actualizar/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response actualizar(@PathParam("id") int id, EstadoCivilRequest request) {
         EstadoCivilResponse response = service.actualizar(id, request);
         return Response.ok(response).build();
     }
 
     @DELETE
-    @Path("/{id}")
+    @Path("/eliminar/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
     public Response eliminar(@PathParam("id") int id) {
         service.eliminar(id);
         return Response.ok("EstadoCivil eliminado correctamente").build();

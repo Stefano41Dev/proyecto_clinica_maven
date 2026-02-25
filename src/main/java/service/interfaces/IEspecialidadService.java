@@ -11,5 +11,5 @@ public interface IEspecialidadService {
     EspecialidadResponse buscarPorId(int idEspecialidad);
     EspecialidadResponse guardarEspecialidad(EspecialidadRequest especialidad);
     EspecialidadResponse actualizarEspecialidad(int id, EspecialidadRequest especialidad);
-    void eliminarEspecialidadPorId(int idEspecialidad);
+    String eliminarEspecialidadPorId(int idEspecialidad);
 }

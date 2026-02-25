@@ -2,7 +2,7 @@ CREATE DATABASE bd_clinica;
 USE bd_clinica;
 
 CREATE TABLE tb_tipo_sexo(
-	id_sexo INT NOT NULL PRIMARY KEY,
+	id_sexo INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
     sexo VARCHAR(50) NOT NULL,
     activo TINYINT(1) NOT NULL DEFAULT 1
 );
@@ -13,7 +13,7 @@ CREATE TABLE tb_tipo_documento(
     activo TINYINT(1) NOT NULL DEFAULT 1
 );
 CREATE TABLE tb_estado_civil(
-	id_estado_civil INT PRIMARY KEY NOT NULL,
+	id_estado_civil INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
     nombre_estado VARCHAR(50) NOT NULL,
     activo TINYINT(1) NOT NULL DEFAULT 1
 );

@@ -72,7 +72,6 @@ public class EstadoCivilServiceImpl implements IEstadoCivilService {
 
         try (Connection cn = ConnectorBD.getConexion()) {
 
-            // 🔎 Validar duplicado
             String verificar = "SELECT COUNT(*) FROM tb_estado_civil WHERE LOWER(nombre_estado)=LOWER(?) AND activo=1";
             PreparedStatement psVer = cn.prepareStatement(verificar);
             psVer.setString(1, request.nombreEstado());
@@ -83,7 +82,6 @@ public class EstadoCivilServiceImpl implements IEstadoCivilService {
                 throw new ConflictException("Ya existe un EstadoCivil con ese nombre");
             }
 
-            // 💾 Insertar
             String insertar = "INSERT INTO tb_estado_civil (nombre_estado, activo) VALUES (?,1)";
             PreparedStatement ps = cn.prepareStatement(insertar, Statement.RETURN_GENERATED_KEYS);
             ps.setString(1, request.nombreEstado());
@@ -107,7 +105,6 @@ public class EstadoCivilServiceImpl implements IEstadoCivilService {
     @Override
     public EstadoCivilResponse actualizar(int id, EstadoCivilRequest request) {
 
-        // validar existencia
         buscarPorId(id);
 
         if (request == null || request.nombreEstado() == null || request.nombreEstado().isBlank()) {
@@ -133,7 +130,6 @@ public class EstadoCivilServiceImpl implements IEstadoCivilService {
     @Override
     public boolean eliminar(int idEstadoCivil) {
 
-        // validar existencia
         buscarPorId(idEstadoCivil);
 
         String sql = "UPDATE tb_estado_civil SET activo=0 WHERE id_estado_civil=?";
@@ -143,6 +139,7 @@ public class EstadoCivilServiceImpl implements IEstadoCivilService {
 
             ps.setInt(1, idEstadoCivil);
             ps.executeUpdate();
+
             return true;
 
         } catch (SQLException e) {

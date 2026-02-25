@@ -2,6 +2,8 @@ package controller;
 
 import java.util.List;
 
+import dto.especialidad.EspecialidadRequest;
+import dto.estado_cita.EstadoCitaRequest;
 import dto.estado_cita.EstadoCitaResponse;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -14,29 +16,32 @@ import service.impl.EstadoCitaServiceImpl;
 import service.interfaces.IEstadoCitaService;
 
 @Path("/estado-cita")
-@RolesPermitidos({Rol.ADMINISTRADOR})   
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
+@RolesPermitidos({Rol.ADMINISTRADOR})
 public class EstadoCitaController {
 
-    private IEstadoCitaService service = new EstadoCitaServiceImpl();
+    IEstadoCitaService service = new EstadoCitaServiceImpl();
 
     @GET
     @Path("/listado")
+    @Produces(MediaType.APPLICATION_JSON)
     public Response listar() {
         List<EstadoCitaResponse> lista = service.listar();
         return Response.ok(lista).build();
     }
 
     @GET
-    @Path("/{id}")
+    @Path("/buscar/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
     public Response buscar(@PathParam("id") int id) {
         EstadoCitaResponse response = service.buscarPorId(id);
         return Response.ok(response).build();
     }
 
     @POST
-    public Response guardar(EstadoCita estadoCita) {
+    @Path("/guardar")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response guardar(EstadoCitaRequest estadoCita) {
         EstadoCitaResponse response = service.guardar(estadoCita);
         return Response.status(Response.Status.CREATED)
                 .entity(response)
@@ -44,14 +49,16 @@ public class EstadoCitaController {
     }
 
     @PUT
-    @Path("/{id}")
-    public Response actualizar(@PathParam("id") int id, EstadoCita estadoCita) {
+    @Path("/actualizar/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response actualizar(@PathParam("id") int id, EstadoCitaRequest estadoCita) {
         EstadoCitaResponse response = service.actualizar(id, estadoCita);
         return Response.ok(response).build();
     }
 
     @DELETE
-    @Path("/{id}")
+    @Path("/eliminar/{id}")
     public Response eliminar(@PathParam("id") int id) {
         service.eliminar(id);
         return Response.ok("EstadoCita eliminado correctamente").build();

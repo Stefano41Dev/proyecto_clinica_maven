@@ -1,13 +1,15 @@
 package dto.cita;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import java.sql.Time;
+import java.util.Date;
 
 public record CitaRequest(
         Integer idPaciente,
         Integer idMedico,
-        LocalDate fechaProgramada,
-        LocalTime hora,
+        Date fechaProgramada,
+        Time hora,
         Integer idEstadoCita,
         String motivo
 ) {}

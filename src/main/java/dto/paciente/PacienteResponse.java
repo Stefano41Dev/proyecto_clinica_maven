@@ -2,6 +2,7 @@ package dto.paciente;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import dto.estado_cita.EstadoCitaResponse;
+import dto.estado_civil.EstadoCivilResponse;
 import dto.tipo_documento.TipoDocumentoResponse;
 import dto.tipo_sexo.TipoSexoResponse;
 import lombok.Builder;
@@ -26,6 +27,6 @@ public record PacienteResponse(
         TipoSexoResponse tipoSexoResponse,
         //Integer idEstadoCivil,
         //String nombreEstadoCivil,
-        EstadoCitaResponse estadoCitaResponse,
+        EstadoCivilResponse estadoCivilResponse,
         String correo
 ) {}

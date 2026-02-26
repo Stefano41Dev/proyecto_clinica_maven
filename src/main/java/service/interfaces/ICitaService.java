@@ -2,13 +2,14 @@ package service.interfaces;
 
 import java.util.List;
 
-import dto.cita.CitaRequest;
-import dto.cita.CitaResponse;
+import dto.cita.*;
+import dto.paginacion.PageResponse;
 
 public interface ICitaService {
-	List<CitaResponse> listar(int pagina, int tamanioPagina);
-	CitaResponse buscarPorId(int idCita);
-	CitaResponse guardar(CitaRequest cita);
-	CitaResponse actualizar(int id, CitaRequest cita);
-    void eliminar(int idCita);
+	PageResponse<CitaListaResponse> listar(int pagina, int tamanioPagina);
+	CitaDatosCompletosResponse buscarDatosCompletosCitaPorId(int idCita);
+	CitaDatosCompletosResponse registrarCita(CitaRequest cita);
+	CitaResponse actualizarCita(int idCita, CitaUpdateRequest cita);
+	CitaResponse buscarDatosCita(int idCita);
+	String eliminar(int idCita);
 }

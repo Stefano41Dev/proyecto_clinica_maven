@@ -1,9 +1,7 @@
 package service.impl;
 
 import bd.ConnectorBD;
-import dto.estado_cita.EstadoCitaResponse;
-import dto.medico.MedicoResponse;
-import dto.medico.MedicoTokenVerificacionResponse;
+import dto.estado_civil.EstadoCivilResponse;
 import dto.paciente.PacienteRequest;
 import dto.paciente.PacienteResponse;
 import dto.paciente.PacienteTokenVerificacionResponse;
@@ -13,7 +11,7 @@ import dto.tipo_sexo.TipoSexoResponse;
 import exception.BadRequestException;
 import exception.ConflictException;
 import exception.ResourceNotFoundException;
-import javassist.NotFoundException;
+
 import service.interfaces.IPacienteService;
 import util.PasswordGenerator;
 
@@ -70,7 +68,7 @@ public class PacienteServiceImpl implements IPacienteService {
                                         .tipoSexoResponse(new TipoSexoResponse(
                                                 rs.getInt("id_sexo"),
                                                 rs.getString("sexo")))
-                                        .estadoCitaResponse(new EstadoCitaResponse(
+                                        .estadoCivilResponse(new EstadoCivilResponse(
                                                 rs.getInt("id_estado_civil"),
                                                 rs.getString("nombre_estado")))
                                         .build()
@@ -107,7 +105,7 @@ public class PacienteServiceImpl implements IPacienteService {
                         .tipoSexoResponse(new TipoSexoResponse(
                                 rs.getInt("id_sexo"),
                                 rs.getString("sexo")))
-                        .estadoCitaResponse(new EstadoCitaResponse(
+                        .estadoCivilResponse(new EstadoCivilResponse(
                                 rs.getInt("id_estado_civil"),
                                 rs.getString("nombre_estado")))
                         .build();
@@ -136,7 +134,8 @@ public class PacienteServiceImpl implements IPacienteService {
             cs.setString(4, passwordHash);
             cs.setInt(5, request.idTipoDocumento());
             cs.setString(6,request.numeroDocumento());
-            cs.setDate(7, new java.sql.Date(request.fechaNacimiento().getTime()));            cs.setInt(8,request.idSexo());
+            cs.setDate(7, new java.sql.Date(request.fechaNacimiento().getTime()));
+            cs.setInt(8,request.idSexo());
             cs.setInt(9,request.idEstadoCivil());
             cs.setString(10,tokenVerificacion);
             cs.setTimestamp(11, new java.sql.Timestamp(tokenExpiracion.getTime()));
@@ -234,7 +233,7 @@ public class PacienteServiceImpl implements IPacienteService {
                         .tipoSexoResponse(new TipoSexoResponse(
                                 rs.getInt("id_sexo"),
                                 rs.getString("sexo")))
-                        .estadoCitaResponse(new EstadoCitaResponse(
+                        .estadoCivilResponse(new EstadoCivilResponse(
                                 rs.getInt("id_estado_civil"),
                                 rs.getString("nombre_estado")))
                         .build();

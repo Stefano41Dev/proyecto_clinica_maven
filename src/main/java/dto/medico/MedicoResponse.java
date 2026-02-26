@@ -1,6 +1,7 @@
 package dto.medico;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import dto.especialidad.EspecialidadResponse;
 import lombok.Builder;
 
 import java.util.Date;
@@ -10,8 +11,7 @@ public record MedicoResponse(
         Integer idMedico,
         String nombres,
         String apellidos,
-        Integer idEspecialidad,
-        String nombreEspecialidad,
+        EspecialidadResponse especialidadResponse,
         String numeroColegiatura,
         String telefono,
         String correo,

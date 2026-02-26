@@ -84,15 +84,13 @@ CREATE TABLE tb_cita (
 
 CREATE TABLE tb_historial_medico (
     id_historial INT AUTO_INCREMENT PRIMARY KEY,
-    id_paciente INT NOT NULL,
-    id_medico INT NOT NULL,
+    id_cita INT NOT NULL,
     fecha_consulta DATE NOT NULL,
     diagnostico TEXT NOT NULL,
     tratamiento TEXT,
     observaciones TEXT,
     activo TINYINT(1) NOT NULL DEFAULT 1,
-    FOREIGN KEY (id_paciente) REFERENCES tb_paciente(id_paciente),
-    FOREIGN KEY (id_medico) REFERENCES tb_medico(id_medico)
+    FOREIGN KEY (id_cita) REFERENCES tb_cita(id_cita)
 );
 
 CREATE TABLE tb_usuario (

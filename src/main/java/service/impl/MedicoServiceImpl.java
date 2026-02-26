@@ -1,6 +1,7 @@
 package service.impl;
 
 import bd.ConnectorBD;
+import dto.especialidad.EspecialidadResponse;
 import dto.medico.*;
 import dto.paginacion.PageResponse;
 import exception.BadRequestException;
@@ -58,8 +59,10 @@ public class MedicoServiceImpl implements IMedicoService {
                                 .correo(rs.getString("correo"))
                                 .numeroColegiatura(rs.getString("numero_colegiatura"))
                                 .telefono(rs.getString("telefono"))
-                                .idEspecialidad(rs.getInt("id_especialidad"))
-                                .nombreEspecialidad(rs.getString("nombre"))
+                                .especialidadResponse(EspecialidadResponse.builder()
+                                        .idEspecialidad(rs.getInt("id_especialidad"))
+                                        .nombre(rs.getString("nombre"))
+                                        .build())
                                 .fechaRegistro(rs.getDate("fecha_registro"))
                                 .build());
                     }
@@ -90,8 +93,10 @@ public class MedicoServiceImpl implements IMedicoService {
                             .correo(rs.getString("correo"))
                             .numeroColegiatura(rs.getString("numero_colegiatura"))
                             .telefono(rs.getString("telefono"))
-                            .idEspecialidad(rs.getInt("id_especialidad"))
-                            .nombreEspecialidad(rs.getString("nombre"))
+                            .especialidadResponse(EspecialidadResponse.builder()
+                                    .idEspecialidad(rs.getInt("id_especialidad"))
+                                    .nombre(rs.getString("nombre"))
+                                    .build())
                             .fechaRegistro(rs.getDate("fecha_registro"))
                             .build();
                 }else{
@@ -181,8 +186,10 @@ public class MedicoServiceImpl implements IMedicoService {
                             .correo(rs.getString("correo"))
                             .numeroColegiatura(rs.getString("numero_colegiatura"))
                             .telefono(rs.getString("telefono"))
-                            .idEspecialidad(rs.getInt("id_especialidad"))
-                            .nombreEspecialidad(rs.getString("nombre"))
+                            .especialidadResponse(EspecialidadResponse.builder()
+                                    .idEspecialidad(rs.getInt("id_especialidad"))
+                                    .nombre(rs.getString("nombre"))
+                                    .build())
                             .fechaRegistro(rs.getDate("fecha_registro"))
                             .build();
                     try {
@@ -277,8 +284,10 @@ public class MedicoServiceImpl implements IMedicoService {
                             .correo(rs.getString("correo"))
                             .numeroColegiatura(rs.getString("numero_colegiatura"))
                             .telefono(rs.getString("telefono"))
-                            .idEspecialidad(rs.getInt("id_especialidad"))
-                            .nombreEspecialidad(rs.getString("nombre"))
+                            .especialidadResponse(EspecialidadResponse.builder()
+                                    .idEspecialidad(rs.getInt("id_especialidad"))
+                                    .nombre(rs.getString("nombre"))
+                                    .build())
                             .fechaRegistro(rs.getDate("fecha_registro"))
                             .build();
                 }else{

@@ -253,6 +253,26 @@ public class CitaServiceImpl implements ICitaService {
     }
 
     @Override
+    public CitaResponse cambiarEstadoCita( CitaCambiarEstadoRequest citaCambiarEstadoRequest) {
+        String sql = "CALL cambiar_estado_cita(?,?)";
+        try(CallableStatement cs = ConnectorBD.getConexion().prepareCall(sql)) {
+            cs.setInt(1, citaCambiarEstadoRequest.idCita());
+            cs.setInt(2, citaCambiarEstadoRequest.idEstadoCita());
+            cs.executeUpdate();
+            return buscarDatosCita(citaCambiarEstadoRequest.idCita());
+
+
+        }catch (SQLException e){
+            if ("45000".equals(e.getSQLState())) {
+                throw new ConflictException(e.getMessage());
+            }
+            throw new RuntimeException("SQLEXCEPTION : ",e);
+        }
+
+
+    }
+
+    @Override
     public String eliminar(int idCita) {
         String sql = "UPDATE tb_cita " +
                 "SET activo = 0 WHERE id_cita = ?";

@@ -4,11 +4,13 @@ import java.util.List;
 
 import dto.historial_medico.HistorialMedicoRequest;
 import dto.historial_medico.HistorialMedicoResponse;
+import dto.historial_medico.HistorialMedicoUpdateRequest;
+import dto.paginacion.PageResponse;
 
 public interface IHistorialMedicoService {
-	List<HistorialMedicoResponse> listar(int pagina, int tamanioPagina);
+	PageResponse<HistorialMedicoResponse> listar(int pagina, int tamanioPagina);
 	HistorialMedicoResponse buscarPorId(int idHistorial);
 	HistorialMedicoResponse guardar(HistorialMedicoRequest historial);
-	HistorialMedicoResponse actualizar(int id, HistorialMedicoRequest historial);
-    void eliminar(int idHistorial);
+	HistorialMedicoResponse actualizar(int id, HistorialMedicoUpdateRequest historial);
+    String eliminar(int idHistorial);
 }

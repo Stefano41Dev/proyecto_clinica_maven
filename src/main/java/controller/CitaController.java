@@ -67,4 +67,14 @@ public class CitaController {
         return Response.ok().entity(mensaje).build();
     }
 
+    @PATCH
+    @Path("/cambiar-estado")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response cambiarEstado(
+          CitaCambiarEstadoRequest estadoRequest
+    ){
+        CitaResponse citaDto = citaService.cambiarEstadoCita(estadoRequest);
+        return Response.ok().entity(citaDto).build();
+    }
 }

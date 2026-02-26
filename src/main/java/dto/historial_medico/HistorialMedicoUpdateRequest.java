@@ -1,8 +1,6 @@
 package dto.historial_medico;
 
-
-public record HistorialMedicoRequest(
-        Integer idCita,
+public record HistorialMedicoUpdateRequest (
         String diagnostico,
         String tratamiento,
         String observaciones

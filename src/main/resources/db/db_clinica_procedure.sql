@@ -866,3 +866,106 @@ END //
 
 DELIMITER ;
 
+DELIMITER //
+
+CREATE PROCEDURE registrar_historial_medico(
+    IN p_id_cita INT,
+    IN p_diagnostico TEXT,
+    IN p_tratamiento TEXT,
+    IN p_observaciones TEXT
+)
+BEGIN
+    DECLARE v_fecha_consulta DATE;
+	DECLARE v_existe_historial INT;
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        RESIGNAL;
+    END;
+
+    START TRANSACTION;
+
+    -- Validar que la cita exista
+    SELECT fecha_programada 
+    INTO v_fecha_consulta 
+    FROM tb_cita 
+    WHERE id_cita = p_id_cita
+    LIMIT 1;
+
+    IF v_fecha_consulta IS NULL THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'La cita no existe';
+    END IF;
+
+	SELECT COUNT(*) 
+    INTO v_existe_historial
+    FROM tb_historial_medico
+    WHERE id_cita = p_id_cita;
+
+    IF v_existe_historial > 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Ya existe un historial medico para esta cita';
+    END IF;
+    
+    INSERT INTO tb_historial_medico 
+    (id_cita, fecha_consulta, diagnostico, tratamiento, observaciones)
+    VALUES 
+    (p_id_cita, v_fecha_consulta, p_diagnostico, p_tratamiento, p_observaciones);
+
+    COMMIT;
+
+    SELECT LAST_INSERT_ID() AS id_historial;
+
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE cambiar_estado_cita(
+    IN p_id_cita INT,
+    IN p_id_estado_cita INT
+)
+BEGIN
+    DECLARE v_existe_estado INT;
+    DECLARE v_existe_cita INT;
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        RESIGNAL;
+    END;
+
+    START TRANSACTION;
+
+    SELECT COUNT(*) 
+    INTO v_existe_cita
+    FROM tb_cita
+    WHERE id_cita = p_id_cita;
+
+    IF v_existe_cita = 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'La cita no existe';
+    END IF;
+
+    -- 2️⃣ Validar que el estado exista
+    SELECT COUNT(*) 
+    INTO v_existe_estado
+    FROM tb_estado_cita
+    WHERE id_estado_cita = p_id_estado_cita;
+
+    IF v_existe_estado = 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'El estado de cita no existe';
+    END IF;
+
+  
+    UPDATE tb_cita 
+    SET id_estado_cita = p_id_estado_cita 
+    WHERE id_cita = p_id_cita;
+
+    COMMIT;
+
+END //
+
+DELIMITER ;

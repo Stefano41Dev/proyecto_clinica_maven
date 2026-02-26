@@ -1,7 +1,5 @@
 package service.interfaces;
 
-import java.util.List;
-
 import dto.cita.*;
 import dto.paginacion.PageResponse;
 
@@ -11,5 +9,6 @@ public interface ICitaService {
 	CitaDatosCompletosResponse registrarCita(CitaRequest cita);
 	CitaResponse actualizarCita(int idCita, CitaUpdateRequest cita);
 	CitaResponse buscarDatosCita(int idCita);
+	CitaResponse cambiarEstadoCita(CitaCambiarEstadoRequest citaCambiarEstadoRequest);
 	String eliminar(int idCita);
 }

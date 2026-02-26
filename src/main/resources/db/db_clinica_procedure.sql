@@ -356,7 +356,7 @@ BEGIN
     INNER JOIN tb_tipo_documento td ON td.id_tipo_documento = pa.id_tipo_documento
     INNER JOIN tb_tipo_sexo ts ON ts.id_sexo = pa.id_sexo
     INNER JOIN tb_estado_civil tec ON tec.id_estado_civil = pa.id_estado_civil
-    WHERE pa.id_paciente = v_id_paciente AND pa.activo = 1 ;
+    WHERE pa.id_paciente = v_id_paciente ;
 END //
 
 DELIMITER ;
@@ -409,4 +409,188 @@ BEGIN
 	END IF;
 END //
 
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE listar_paciente_paginado(
+	IN p_limit INT,
+    IN p_offset INT
+)
+BEGIN
+ SELECT 
+    pa.id_paciente,
+    pe.nombres,
+    pe.apellidos,
+    pe.correo,
+    pa.id_tipo_documento,
+    td.nombre_documento,
+    pa.numero_documento,
+    pa.fecha_nacimiento,
+    pa.fecha_registro,
+    pa.id_sexo,
+    ts.sexo,
+    pa.id_estado_civil,
+    tec.nombre_estado
+    FROM tb_paciente pa
+    INNER JOIN tb_persona pe ON pe.id_persona = pa.id_persona
+    INNER JOIN tb_tipo_documento td ON td.id_tipo_documento = pa.id_tipo_documento
+    INNER JOIN tb_tipo_sexo ts ON ts.id_sexo = pa.id_sexo
+    INNER JOIN tb_estado_civil tec ON tec.id_estado_civil = pa.id_estado_civil
+    WHERE pa.activo = 1
+	LIMIT p_limit OFFSET p_offset;
+
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE buscar_paciente_id(
+	IN p_id_paciente INT
+)
+BEGIN
+	 SELECT 
+    pa.id_paciente,
+    pe.nombres,
+    pe.apellidos,
+    pe.correo,
+    pa.id_tipo_documento,
+    td.nombre_documento,
+    pa.numero_documento,
+    pa.fecha_nacimiento,
+    pa.fecha_registro,
+    pa.id_sexo,
+    ts.sexo,
+    pa.id_estado_civil,
+    tec.nombre_estado
+    FROM tb_paciente pa
+    INNER JOIN tb_persona pe ON pe.id_persona = pa.id_persona
+    INNER JOIN tb_tipo_documento td ON td.id_tipo_documento = pa.id_tipo_documento
+    INNER JOIN tb_tipo_sexo ts ON ts.id_sexo = pa.id_sexo
+    INNER JOIN tb_estado_civil tec ON tec.id_estado_civil = pa.id_estado_civil
+    WHERE pa.id_paciente = p_id_paciente AND pa.activo = 1;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE eliminar_paciente_por_id(
+	IN p_id_paciente INT
+)
+BEGIN
+	DECLARE v_id_persona INT;
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SELECT 'ERROR AL ELIMINAR AL PACIENTE' AS mensaje;
+    END;
+
+    START TRANSACTION;
+
+    SELECT id_persona
+    INTO v_id_persona
+    FROM tb_paciente
+    WHERE id_paciente = p_id_paciente AND activo = 1
+    LIMIT 1;
+
+    IF v_id_persona IS NULL THEN
+        ROLLBACK;
+        SELECT 'PACIENTE NO ENCONTRADO O YA INACTIVO' AS mensaje;
+    ELSE
+
+        UPDATE tb_paciente
+        SET activo = 0
+        WHERE id_paciente = p_id_paciente AND activo = 1;
+
+        UPDATE tb_persona
+        SET activo = 0
+        WHERE id_persona = v_id_persona AND activo = 1;
+
+        UPDATE tb_usuario
+        SET activo = 0
+        WHERE id_persona = v_id_persona AND activo = 1;
+
+        COMMIT;
+
+        SELECT 'SE ELIMINO EL PACIENTE CORRECTAMENTE' AS mensaje;
+    END IF;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE actualizar_paciente_id(
+	IN p_id_paciente INT,
+	IN p_nombres VARCHAR(100),
+    IN p_apellidos VARCHAR(100),
+    IN p_correo VARCHAR(100),
+    IN p_password VARCHAR(250),
+	IN p_id_tipo_documento INT,
+    IN p_numero_documento VARCHAR(20),
+    IN p_fecha_nacimiento DATE,
+    IN p_id_sexo INT,
+    IN p_id_estado_civil INT
+)
+BEGIN
+	DECLARE v_id_persona INT;
+    
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        RESIGNAL;
+    END;
+
+    START TRANSACTION;
+    
+    SELECT id_persona
+    INTO v_id_persona
+    FROM tb_paciente WHERE id_paciente = p_id_paciente AND activo = 1 LIMIT 1;
+    
+	UPDATE tb_paciente
+		SET id_tipo_documento = p_id_tipo_documento,
+			numero_documento = p_numero_documento,
+			fecha_nacimiento = p_fecha_nacimiento,
+            id_sexo = p_id_sexo,
+            id_estado_civil = p_id_estado_civil
+	WHERE id_paciente = p_id_paciente AND activo = 1 ;
+    
+    UPDATE tb_persona
+		SET nombres = p_nombres,
+			apellidos = p_apellidos,
+            correo = p_correo
+	WHERE id_persona = v_id_persona AND activo = 1 ;
+    
+	UPDATE tb_usuario
+		SET correo = p_correo,
+			passwd = p_password
+	WHERE id_persona = v_id_persona AND activo = 1 ; 
+    
+    COMMIT;
+    
+     SELECT 
+    pa.id_paciente,
+    pe.nombres,
+    pe.apellidos,
+    pe.correo,
+    pa.id_tipo_documento,
+    td.nombre_documento,
+    pa.numero_documento,
+    pa.fecha_nacimiento,
+    pa.fecha_registro,
+    pa.id_sexo,
+    ts.sexo,
+    pa.id_estado_civil,
+    tec.nombre_estado
+    FROM tb_paciente pa
+    INNER JOIN tb_persona pe ON pe.id_persona = pa.id_persona
+    INNER JOIN tb_tipo_documento td ON td.id_tipo_documento = pa.id_tipo_documento
+    INNER JOIN tb_tipo_sexo ts ON ts.id_sexo = pa.id_sexo
+    INNER JOIN tb_estado_civil tec ON tec.id_estado_civil = pa.id_estado_civil
+    WHERE pa.id_paciente = p_id_paciente AND pa.activo = 1;
+
+END //
 DELIMITER ;

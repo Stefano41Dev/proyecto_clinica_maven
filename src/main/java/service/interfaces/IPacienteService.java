@@ -5,13 +5,14 @@ import java.util.List;
 import dto.paciente.PacienteRequest;
 import dto.paciente.PacienteResponse;
 import dto.paciente.PacienteTokenVerificacionResponse;
+import dto.paginacion.PageResponse;
 
 public interface IPacienteService {
-	List<PacienteResponse> listaPacientes(int pagina, int tamanioPagina);
+	PageResponse<PacienteResponse> listaPacientes(int pagina, int tamanioPagina);
     PacienteResponse buscarPorId(int idPaciente);
     String registrarPaciente(PacienteRequest request);
     PacienteTokenVerificacionResponse buscarPorToken(String token);
     void activarCuenta(String token);
     PacienteResponse actualizarPaciente(int idPaciente, PacienteRequest request);
-    void eliminar(int idPaciente);
+    String eliminar(int idPaciente);
 }

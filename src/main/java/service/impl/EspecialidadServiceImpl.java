@@ -4,9 +4,6 @@ import bd.ConnectorBD;
 import dto.especialidad.EspecialidadRequest;
 import dto.especialidad.EspecialidadResponse;
 import exception.ResourceNotFoundException;
-import javassist.NotFoundException;
-import mapper.EspecialidadMapper;
-import model.Especialidad;
 import service.interfaces.IEspecialidadService;
 
 import java.sql.PreparedStatement;
@@ -16,33 +13,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EspecialidadServiceImpl implements IEspecialidadService {
-    EspecialidadMapper especialidadMapper = new EspecialidadMapper();
     @Override
     public List<EspecialidadResponse> listarEspecialidad() {
         String query = "SELECT * FROM tb_especialidad WHERE activo = 1";
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
-        List<Especialidad> listaEspecialidad = new ArrayList<>();
+        List<EspecialidadResponse> listaEspecialidad = new ArrayList<>();
         try{
             preparedStatement = ConnectorBD.getConexion().prepareStatement(query);
             resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()){
                 listaEspecialidad.add(
-                        Especialidad.builder()
+                        EspecialidadResponse.builder()
                                 .idEspecialidad(resultSet.getInt(1))
                                 .nombre(resultSet.getString(2))
-                                .activo(resultSet.getBoolean(3))
                                 .build()
                 );
+
             }
-
-
 
         } catch (SQLException e) {
             throw new RuntimeException("Error listando especialidades", e);
         }
-        return listaEspecialidad.stream().map(especialidadMapper::toDto).toList();
+        return listaEspecialidad;
     }
 
     @Override
@@ -58,13 +52,10 @@ public class EspecialidadServiceImpl implements IEspecialidadService {
             resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
-                Especialidad especialidad = Especialidad.builder()
+                return EspecialidadResponse.builder()
                         .idEspecialidad(resultSet.getInt(1))
                         .nombre(resultSet.getString(2))
-                        .activo(resultSet.getBoolean(3))
                         .build();
-
-                return especialidadMapper.toDto(especialidad);
             }
 
         } catch (SQLException e) {
@@ -90,13 +81,10 @@ public class EspecialidadServiceImpl implements IEspecialidadService {
             generatedKeys = preparedStatement.getGeneratedKeys();
 
             if (generatedKeys.next()) {
-                Especialidad nueva = Especialidad.builder()
+                return EspecialidadResponse.builder()
                         .idEspecialidad(generatedKeys.getInt(1))
                         .nombre(especialidad.nombre())
-                        .activo(true)
                         .build();
-
-                return especialidadMapper.toDto(nueva);
             }
 
         } catch (SQLException e) {

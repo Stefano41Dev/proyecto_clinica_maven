@@ -30,6 +30,7 @@ public class CitaController {
     @Path("/registrar")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
+    @RolesPermitidos(Rol.ADMINISTRADOR)
     public Response registrarCita(
             CitaRequest citaRequest
     ){

@@ -52,6 +52,7 @@ public class MedicoController {
     @GET
     @Path("/buscar/{id_medico}")
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesPermitidos({Rol.ADMINISTRADOR,Rol.MEDICO,Rol.PACIENTE})
     public Response buscarMedicoPorId(
             @PathParam("id_medico") int id
     ){

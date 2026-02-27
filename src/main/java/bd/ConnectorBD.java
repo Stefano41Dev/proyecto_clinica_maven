@@ -7,7 +7,7 @@ import java.sql.SQLException;
 public class ConnectorBD {
 	public static String url="jdbc:mysql://localhost:3306/bd_clinica";
 	public static String usuario="root";
-	public static String password="patrick12";
+	public static String password="stefano";
 	private static Connection cn;
 	
 	public static Connection getConexion(){

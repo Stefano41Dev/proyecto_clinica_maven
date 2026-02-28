@@ -12,7 +12,7 @@ import java.io.IOException;
 public class CorsFilter implements ContainerResponseFilter {
 
     @Override
-    public void filter(ContainerRequestContext containerRequestContext, ContainerResponseContext containerResponseContext) throws IOException {
+    public void filter(ContainerRequestContext containerRequestContext, ContainerResponseContext containerResponseContext) {
         containerResponseContext.getHeaders().add(
                 "Access-Control-Allow-Origin", "http://localhost:4200");
 

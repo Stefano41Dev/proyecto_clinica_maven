@@ -148,12 +148,21 @@
               <artifactId>logback-classic</artifactId>
               <version>1.4.14</version>
           </dependency>
+
           <!-- Java Mail-->
           <dependency>
               <groupId>com.sun.mail</groupId>
               <artifactId>jakarta.mail</artifactId>
               <version>2.0.1</version>
           </dependency>
+
+      <!-- ================= WEBSOCKET ================= -->
+      <dependency>
+          <groupId>org.apache.tomcat</groupId>
+          <artifactId>tomcat-websocket-api</artifactId>
+          <version>10.1.28</version>
+          <scope>provided</scope>
+      </dependency>
   </dependencies>
   <build>
     <finalName>ClinicaProyect</finalName>

@@ -5,25 +5,18 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class ConnectorBD {
-	public static String url="jdbc:mysql://localhost:3306/bd_clinica";
-	public static String usuario="root";
-	public static String password="stefano";
-	private static Connection cn;
-	
-	public static Connection getConexion(){
+	public static String url = "jdbc:mysql://localhost:3306/bd_clinica";
+	public static String usuario = "root";
+	public static String password = "stefano";
+
+	public static Connection getConexion() {
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
-	
-			cn=DriverManager.getConnection(url,usuario,password);
-				
-			if(cn!=null) {
-				System.out.print("Se realizo correctamente la conexion");
-			}
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (SQLException e) {	
-			e.printStackTrace();
+
+			return DriverManager.getConnection(url, usuario, password);
+
+		} catch (ClassNotFoundException | SQLException e) {
+			throw new RuntimeException("Error al obtener conexión", e);
 		}
-		return cn;	
-	} 
+	}
 }

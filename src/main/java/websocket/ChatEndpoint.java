@@ -11,7 +11,6 @@ import java.util.Set;
 @Slf4j
 @ServerEndpoint("/chat")
 public class ChatEndpoint {
-
     private static final Set<Session> sesionesActivas = Collections.synchronizedSet(new HashSet<>());
 
     @OnOpen
@@ -41,5 +40,4 @@ public class ChatEndpoint {
     public void onError(Session session, Throwable throwable) {
         log.error("Error en el websocket: {}", throwable.getMessage());
     }
-
 }

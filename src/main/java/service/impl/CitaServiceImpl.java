@@ -178,6 +178,32 @@ public class CitaServiceImpl implements ICitaService {
     }
 
     @Override
+    public boolean consultarEstadoCita(int idCita) {
+        String sql = "SELECT id_estado_cita FROM tb_cita WHERE id_cita = ? AND activo = 1";
+
+        try (Connection conn = ConnectorBD.getConexion();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, idCita);
+
+            try (ResultSet rs = ps.executeQuery()) {
+
+                if (rs.next()) {
+                    int idEstado = rs.getInt("id_estado_cita");
+
+
+                    return idEstado == 2;
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al consultar estado de cita", e);
+        }
+
+        return false;
+    }
+
+    @Override
     public CitaDatosCompletosResponse registrarCita(CitaRequest cita) {
         String sql = "CALL registrar_cita_validando(?,?,?,?,?,?)";
         try(CallableStatement cs = ConnectorBD.getConexion().prepareCall(sql)){

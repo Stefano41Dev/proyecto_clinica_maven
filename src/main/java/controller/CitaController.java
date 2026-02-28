@@ -21,8 +21,7 @@ public class CitaController {
     @GET
     @Path("/buscar-completa/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    @RolesPermitidos({Rol.ADMINISTRADOR, Rol.PACIENTE})
-
+    @RolesPermitidos({Rol.ADMINISTRADOR, Rol.PACIENTE, Rol.MEDICO})
     public Response buscarCitaCompletaId(
             @PathParam("id") int id
     ){
@@ -96,7 +95,17 @@ public class CitaController {
         PageResponse<CitaListaResponse> citaDto = citaService.buscarCitasPorCorreo(correo, pagina, tamanhioPagina);
         return Response.ok().entity(citaDto).build();
     }
-
+    @GET
+    @Path("/consultar-cita-atendida/{idCita}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @RolesPermitidos({Rol.ADMINISTRADOR, Rol.MEDICO})
+    public Response esCitaAtendida(
+            @PathParam("idCita") int idCita
+    ){
+        boolean citaDto = citaService.consultarEstadoCita(idCita);
+        return Response.ok().entity(citaDto).build();
+    }
     @GET
     @Path("/listar-filtro")
     @Produces(MediaType.APPLICATION_JSON)

@@ -3,6 +3,8 @@ package service.interfaces;
 import dto.cita.*;
 import dto.paginacion.PageResponse;
 
+import java.util.Date;
+
 public interface ICitaService {
 	PageResponse<CitaListaResponse> listar(int pagina, int tamanioPagina);
 	CitaDatosCompletosResponse buscarDatosCompletosCitaPorId(int idCita);
@@ -11,5 +13,6 @@ public interface ICitaService {
 	CitaResponse buscarDatosCita(int idCita);
 	CitaResponse cambiarEstadoCita(CitaCambiarEstadoRequest citaCambiarEstadoRequest);
 	String eliminar(int idCita);
+	PageResponse<CitaListaResponse> listarPaginacionPorEstadoCitaYFecha(int pagina,int tamanioPagina, Integer idEstadoCita,Date fecha);
 	PageResponse<CitaListaResponse> buscarCitasPorCorreo(String correo, int pagina, int tamanioPag);
 }

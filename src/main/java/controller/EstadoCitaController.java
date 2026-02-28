@@ -24,6 +24,7 @@ public class EstadoCitaController {
     @GET
     @Path("/listado")
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesPermitidos({Rol.ADMINISTRADOR, Rol.MEDICO})
     public Response listar() {
         List<EstadoCitaResponse> lista = service.listar();
         return Response.ok(lista).build();

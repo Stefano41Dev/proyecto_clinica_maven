@@ -10,6 +10,8 @@ import security.RolesPermitidos;
 import service.impl.CitaServiceImpl;
 import service.interfaces.ICitaService;
 
+import java.util.Date;
+
 
 @Path("/cita")
 @RolesPermitidos({Rol.MEDICO, Rol.ADMINISTRADOR})
@@ -92,6 +94,38 @@ public class CitaController {
             @QueryParam("tamPag") int tamanhioPagina
     ){
         PageResponse<CitaListaResponse> citaDto = citaService.buscarCitasPorCorreo(correo, pagina, tamanhioPagina);
+        return Response.ok().entity(citaDto).build();
+    }
+
+    @GET
+    @Path("/listar-filtro")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @RolesPermitidos({Rol.MEDICO})
+    public Response listarCitasConFiltro(
+
+            @QueryParam("pagina") @DefaultValue("1") int pagina,
+            @QueryParam("tamPag") @DefaultValue("10") int tamanhioPagina,
+
+            @QueryParam("idEstadoCita") Integer idEstadoCita,
+            @QueryParam("fecha") String fechaStr
+    ) {
+
+        Date fecha = null;
+
+        try {
+            if (fechaStr != null && !fechaStr.isEmpty()) {
+                fecha = java.sql.Date.valueOf(fechaStr);
+            }
+        } catch (IllegalArgumentException e) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Formato de fecha inválido. Use yyyy-MM-dd")
+                    .build();
+        }
+
+        PageResponse<CitaListaResponse> citaDto =
+                citaService.listarPaginacionPorEstadoCitaYFecha(pagina, tamanhioPagina, idEstadoCita, fecha);
+
         return Response.ok().entity(citaDto).build();
     }
 }

@@ -1075,3 +1075,69 @@ BEGIN
 END //
 
 DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE listar_citas_paginado_filtro(
+    IN p_limit INT,
+    IN p_offset INT,
+    IN p_id_estado_cita INT,
+    IN p_fecha DATE
+)
+BEGIN
+
+    SELECT 
+        -- ======================
+        -- CITA
+        -- ======================
+        c.id_cita,
+        c.fecha_programada,
+        c.hora,
+        c.motivo,
+
+        -- ======================
+        -- PACIENTE
+        -- ======================
+        p.id_paciente,
+        pp.nombres AS paciente_nombres,
+        pp.apellidos AS paciente_apellidos,
+
+        -- ======================
+        -- MEDICO
+        -- ======================
+        m.id_medico,
+        pm.nombres AS medico_nombres,
+        pm.apellidos AS medico_apellidos,
+
+        -- ======================
+        -- ESTADO CITA
+        -- ======================
+        ec.id_estado_cita,
+        ec.nombre_estado
+
+    FROM tb_cita c
+
+    INNER JOIN tb_paciente p 
+        ON p.id_paciente = c.id_paciente
+
+    INNER JOIN tb_persona pp 
+        ON pp.id_persona = p.id_persona
+
+    INNER JOIN tb_medico m 
+        ON m.id_medico = c.id_medico
+
+    INNER JOIN tb_persona pm 
+        ON pm.id_persona = m.id_persona
+
+    INNER JOIN tb_estado_cita ec 
+        ON ec.id_estado_cita = c.id_estado_cita
+
+    WHERE c.activo = 1
+      AND (p_id_estado_cita IS NULL OR c.id_estado_cita = p_id_estado_cita)
+      AND (p_fecha IS NULL OR c.fecha_programada = p_fecha)
+
+    LIMIT p_limit OFFSET p_offset;
+
+END //
+
+DELIMITER ;

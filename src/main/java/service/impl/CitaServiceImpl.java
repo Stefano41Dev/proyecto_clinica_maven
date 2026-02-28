@@ -16,6 +16,7 @@ import service.interfaces.ICitaService;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class CitaServiceImpl implements ICitaService {
@@ -288,6 +289,98 @@ public class CitaServiceImpl implements ICitaService {
         }catch (SQLException e){
             throw new RuntimeException("SQLEXCEPTION : ",e);
         }
+    }
+
+    @Override
+    public PageResponse<CitaListaResponse> listarPaginacionPorEstadoCitaYFecha(int pagina, int tamanioPagina, Integer idEstadoCita, Date fecha) {
+        if (pagina < 1) pagina = 1;
+        if (tamanioPagina <= 0) tamanioPagina = 10;
+
+        List<CitaListaResponse> lista = new ArrayList<>();
+        long totalRegistros = 0;
+
+        int offset = (pagina - 1) * tamanioPagina;
+
+        String sqlData = "CALL listar_citas_paginado_filtro(?,?,?,?)";
+
+        String sqlCount = """
+        SELECT COUNT(*)
+        FROM tb_cita c
+        WHERE c.activo = 1
+          AND (? IS NULL OR c.id_estado_cita = ?)
+          AND (? IS NULL OR c.fecha_programada = ?)
+    """;
+
+        try (Connection conn = ConnectorBD.getConexion()) {
+
+
+            try (PreparedStatement psCount = conn.prepareStatement(sqlCount)) {
+
+                psCount.setObject(1, idEstadoCita);
+                psCount.setObject(2, idEstadoCita);
+                psCount.setDate(3, fecha != null ? new java.sql.Date(fecha.getTime()) : null);
+                psCount.setDate(4, fecha != null ? new java.sql.Date(fecha.getTime()) : null);
+
+                try (ResultSet rsCount = psCount.executeQuery()) {
+                    if (rsCount.next()) {
+                        totalRegistros = rsCount.getLong(1);
+                    }
+                }
+            }
+
+
+            try (CallableStatement cs = conn.prepareCall(sqlData)) {
+
+                cs.setInt(1, tamanioPagina);
+                cs.setInt(2, offset);
+
+                if (idEstadoCita != null) {
+                    cs.setInt(3, idEstadoCita);
+                } else {
+                    cs.setNull(3, Types.INTEGER);
+                }
+
+                if (fecha != null) {
+                    cs.setDate(4, new java.sql.Date(fecha.getTime()));
+                } else {
+                    cs.setNull(4, Types.DATE);
+                }
+
+                try (ResultSet rs = cs.executeQuery()) {
+
+                    while (rs.next()) {
+                        lista.add(
+                                CitaListaResponse.builder()
+                                        .idCita(rs.getInt("id_cita"))
+                                        .fechaProgramada(rs.getDate("fecha_programada"))
+                                        .hora(rs.getTime("hora"))
+                                        .motivo(rs.getString("motivo"))
+
+                                        .idPaciente(rs.getInt("id_paciente"))
+                                        .nombresPaciente(rs.getString("paciente_nombres"))
+                                        .apellidosPaciente(rs.getString("paciente_apellidos"))
+
+                                        .idMedico(rs.getInt("id_medico"))
+                                        .nombresMedico(rs.getString("medico_nombres"))
+                                        .apellidosMedico(rs.getString("medico_apellidos"))
+
+                                        .estadoCitaResponse(
+                                                EstadoCitaResponse.builder()
+                                                        .idEstadoCita(rs.getInt("id_estado_cita"))
+                                                        .nombreEstado(rs.getString("nombre_estado"))
+                                                        .build()
+                                        )
+                                        .build()
+                        );
+                    }
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("SQLEXCEPTION: ", e);
+        }
+
+        return new PageResponse<>(lista, pagina, tamanioPagina, totalRegistros);
     }
 
     @Override

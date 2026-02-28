@@ -39,7 +39,7 @@ public class ChatEndpoint {
 
     @OnError
     public void onError(Session session, Throwable throwable) {
-        log.error("Error en el chat: {}", throwable.getMessage());
+        log.error("Error en el websocket: {}", throwable.getMessage());
     }
 
 }

@@ -289,4 +289,73 @@ public class CitaServiceImpl implements ICitaService {
             throw new RuntimeException("SQLEXCEPTION : ",e);
         }
     }
+
+    @Override
+    public PageResponse<CitaListaResponse> buscarCitasPorCorreo(String correo, int pagina, int tamanioPagina) {
+        if (pagina < 1) pagina = 1;
+        if (tamanioPagina <= 0) tamanioPagina = 10;
+
+        List<CitaListaResponse> lista = new ArrayList<>();
+        long totalRegistros = 0;
+
+        int offset = (pagina - 1) * tamanioPagina;
+
+        String sql = "{CALL listar_citas_por_correo_paginado(?, ?, ?)}";
+
+        try (Connection conn = ConnectorBD.getConexion();
+             CallableStatement cs = conn.prepareCall(sql)) {
+
+            cs.setString(1, correo);
+            cs.setInt(2, tamanioPagina);
+            cs.setInt(3, offset);
+
+            boolean hasResults = cs.execute();
+
+            // PRIMER RESULTSET → TOTAL
+            if (hasResults) {
+                try (ResultSet rsCount = cs.getResultSet()) {
+                    if (rsCount.next()) {
+                        totalRegistros = rsCount.getLong("total");
+                    }
+                }
+            }
+
+            // SEGUNDO RESULTSET → DATA
+            if (cs.getMoreResults()) {
+                try (ResultSet rs = cs.getResultSet()) {
+
+                    while (rs.next()) {
+                        lista.add(
+                                CitaListaResponse.builder()
+                                        .idCita(rs.getInt("id_cita"))
+                                        .fechaProgramada(rs.getDate("fecha_programada"))
+                                        .hora(rs.getTime("hora"))
+                                        .motivo(rs.getString("motivo"))
+
+                                        .idPaciente(rs.getInt("id_paciente"))
+                                        .nombresPaciente(rs.getString("paciente_nombres"))
+                                        .apellidosPaciente(rs.getString("paciente_apellidos"))
+
+                                        .idMedico(rs.getInt("id_medico"))
+                                        .nombresMedico(rs.getString("medico_nombres"))
+                                        .apellidosMedico(rs.getString("medico_apellidos"))
+
+                                        .estadoCitaResponse(
+                                                EstadoCitaResponse.builder()
+                                                        .idEstadoCita(rs.getInt("id_estado_cita"))
+                                                        .nombreEstado(rs.getString("nombre_estado"))
+                                                        .build()
+                                        )
+                                        .build()
+                        );
+                    }
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al listar citas por correo", e);
+        }
+
+        return new PageResponse<>(lista, pagina, tamanioPagina, totalRegistros);
+    }
 }

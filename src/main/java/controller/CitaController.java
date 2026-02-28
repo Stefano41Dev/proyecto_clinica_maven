@@ -19,6 +19,8 @@ public class CitaController {
     @GET
     @Path("/buscar-completa/{id}")
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesPermitidos({Rol.ADMINISTRADOR, Rol.PACIENTE})
+
     public Response buscarCitaCompletaId(
             @PathParam("id") int id
     ){
@@ -76,6 +78,20 @@ public class CitaController {
           CitaCambiarEstadoRequest estadoRequest
     ){
         CitaResponse citaDto = citaService.cambiarEstadoCita(estadoRequest);
+        return Response.ok().entity(citaDto).build();
+    }
+
+    @GET
+    @Path("/buscar-citas-correo/{correo}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @RolesPermitidos({Rol.ADMINISTRADOR, Rol.PACIENTE})
+    public Response buscarCitasCorreo(
+            @PathParam("correo") String correo,
+            @QueryParam("pagina") int pagina,
+            @QueryParam("tamPag") int tamanhioPagina
+    ){
+        PageResponse<CitaListaResponse> citaDto = citaService.buscarCitasPorCorreo(correo, pagina, tamanhioPagina);
         return Response.ok().entity(citaDto).build();
     }
 }

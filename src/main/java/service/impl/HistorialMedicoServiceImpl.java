@@ -87,6 +87,58 @@ public class HistorialMedicoServiceImpl implements IHistorialMedicoService {
     }
 
     @Override
+    public PageResponse<HistorialMedicoResponse> listaHistorialMedicoUsuarioPorCorreo(int pagina, int tamanioPagina, String correo) {
+        if (pagina < 1) pagina = 1;
+        if (tamanioPagina <= 0) tamanioPagina = 10;
+
+        List<HistorialMedicoResponse> lista = new ArrayList<>();
+        long totalRegistros = 0;
+
+        int offset = (pagina - 1) * tamanioPagina;
+
+        String sql = "{CALL listar_historial_por_correo(?, ?, ?)}";
+
+        try (Connection conn = ConnectorBD.getConexion();
+             CallableStatement cs = conn.prepareCall(sql)) {
+
+            cs.setString(1, correo);
+            cs.setInt(2, tamanioPagina);
+            cs.setInt(3, offset);
+
+            boolean hasResults = cs.execute();
+
+            if (hasResults) {
+                try (ResultSet rsCount = cs.getResultSet()) {
+                    if (rsCount.next()) {
+                        totalRegistros = rsCount.getLong("total");
+                    }
+                }
+            }
+
+            // Segundo resultset → datos
+            if (cs.getMoreResults()) {
+                try (ResultSet rs = cs.getResultSet()) {
+                    while (rs.next()) {
+                        lista.add(HistorialMedicoResponse.builder()
+                                .idHistorial(rs.getInt("id_historial"))
+                                .idCita(rs.getInt("id_cita"))
+                                .fechaConsulta(rs.getDate("fecha_consulta"))
+                                .diagnostico(rs.getString("diagnostico"))
+                                .tratamiento(rs.getString("tratamiento"))
+                                .observaciones(rs.getString("observaciones"))
+                                .build());
+                    }
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al listar historial por correo", e);
+        }
+
+        return new PageResponse<>(lista, pagina, tamanioPagina, totalRegistros);
+    }
+
+    @Override
     public HistorialMedicoResponse guardar(HistorialMedicoRequest historial) {
         String sql = "CALL registrar_historial_medico(?,?,?,?)";
 

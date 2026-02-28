@@ -64,4 +64,17 @@ public class HistorialMedicoController {
         HistorialMedicoResponse historialMedicoResponse = historialMedicoService.actualizar(idHistorial, request);
         return Response.status(Response.Status.CREATED).entity(historialMedicoResponse).build();
     }
+    @GET
+    @Path("/buscar-historial-paciente/{correo}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesPermitidos({Rol.ADMINISTRADOR, Rol.PACIENTE})
+    public Response buscarHistorialPaciente(
+            @PathParam("correo") String correo,
+            @QueryParam("pagina") int pagina,
+            @QueryParam("tamPag") int tamanhioPagina
+    ){
+        PageResponse<HistorialMedicoResponse> historialMedicoResponse = historialMedicoService.listaHistorialMedicoUsuarioPorCorreo(pagina,tamanhioPagina,correo);
+        return Response.ok().entity(historialMedicoResponse).build();
+    }
+
 }

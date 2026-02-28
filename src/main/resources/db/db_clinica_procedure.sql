@@ -969,3 +969,109 @@ BEGIN
 END //
 
 DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE listar_historial_por_correo(
+    IN p_correo VARCHAR(100),
+    IN p_limit INT,
+    IN p_offset INT
+)
+BEGIN
+
+    -- Total de registros
+    SELECT COUNT(*) AS total
+    FROM tb_historial_medico hm
+    INNER JOIN tb_cita c ON hm.id_cita = c.id_cita
+    INNER JOIN tb_paciente pa ON c.id_paciente = pa.id_paciente
+    INNER JOIN tb_persona pe ON pa.id_persona = pe.id_persona
+    WHERE hm.activo = 1
+      AND pe.correo = p_correo;
+
+    -- Datos paginados
+    SELECT 
+        hm.id_historial,
+        hm.id_cita,
+        hm.fecha_consulta,
+        hm.diagnostico,
+        hm.tratamiento,
+        hm.observaciones
+    FROM tb_historial_medico hm
+    INNER JOIN tb_cita c ON hm.id_cita = c.id_cita
+    INNER JOIN tb_paciente pa ON c.id_paciente = pa.id_paciente
+    INNER JOIN tb_persona pe ON pa.id_persona = pe.id_persona
+    WHERE hm.activo = 1
+      AND pe.correo = p_correo
+    ORDER BY hm.fecha_consulta DESC
+    LIMIT p_limit OFFSET p_offset;
+
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE listar_citas_por_correo_paginado(
+    IN p_correo VARCHAR(100),
+    IN p_limit INT,
+    IN p_offset INT
+)
+BEGIN
+
+    -- ======================
+    -- TOTAL REGISTROS
+    -- ======================
+    SELECT COUNT(*) AS total
+    FROM tb_cita c
+    INNER JOIN tb_paciente p ON p.id_paciente = c.id_paciente
+    INNER JOIN tb_persona pp ON pp.id_persona = p.id_persona
+    WHERE c.activo = 1
+      AND pp.correo = p_correo;
+
+    -- ======================
+    -- DATA PAGINADA
+    -- ======================
+    SELECT 
+        c.id_cita,
+        c.fecha_programada,
+        c.hora,
+        c.motivo,
+
+        p.id_paciente,
+        pp.nombres AS paciente_nombres,
+        pp.apellidos AS paciente_apellidos,
+
+        m.id_medico,
+        pm.nombres AS medico_nombres,
+        pm.apellidos AS medico_apellidos,
+
+        ec.id_estado_cita,
+        ec.nombre_estado
+
+    FROM tb_cita c
+
+    INNER JOIN tb_paciente p 
+        ON p.id_paciente = c.id_paciente
+
+    INNER JOIN tb_persona pp 
+        ON pp.id_persona = p.id_persona
+
+    INNER JOIN tb_medico m 
+        ON m.id_medico = c.id_medico
+
+    INNER JOIN tb_persona pm 
+        ON pm.id_persona = m.id_persona
+
+    INNER JOIN tb_estado_cita ec 
+        ON ec.id_estado_cita = c.id_estado_cita
+
+    WHERE c.activo = 1
+      AND pp.correo = p_correo
+
+    ORDER BY c.fecha_programada DESC
+
+    LIMIT p_limit OFFSET p_offset;
+
+END //
+
+DELIMITER ;

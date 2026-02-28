@@ -11,4 +11,5 @@ public interface ICitaService {
 	CitaResponse buscarDatosCita(int idCita);
 	CitaResponse cambiarEstadoCita(CitaCambiarEstadoRequest citaCambiarEstadoRequest);
 	String eliminar(int idCita);
+	PageResponse<CitaListaResponse> buscarCitasPorCorreo(String correo, int pagina, int tamanioPag);
 }
